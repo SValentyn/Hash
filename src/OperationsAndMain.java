@@ -3,9 +3,8 @@ import java.util.HashSet;
 import java.util.Random;
 
 /**
- * Класс для работы с хэшированием с помощью массива, который не содержит повторений.
- * Реализованы способы получения хэша: умножением и делением.
- * Предусмотрена обработка коллизий.
+ * A class for working with hashing using an array that does not contain repetitions.
+ * Implemented ways to get hash: multiplication and division. Collision handling is provided.
  *
  * @author Syniuk Valentyn
  */
@@ -15,30 +14,27 @@ public class OperationsAndMain {
 
     public static void main(String[] args) {
 
-        // HashSet - не содержит повторений
+        // HashSet type collection - no repetitions
         HashSet<Integer> hashSet = new HashSet<>(10);
         while (hashSet.size() != 10) {
             Random random = new Random();
             hashSet.add(random.nextInt(1000) + 1);
         }
 
-        // преобразуем HashSet в массив arrayInt
+        // Convert the HashSet to an array
         Integer[] array = hashSet.toArray(new Integer[hashSet.size()]);
         System.out.print("\n\nRandom array: { ");
-        for (Integer element : array)
-            System.out.print(element + ", ");
+        for (Integer element : array) System.out.print(element + ", ");
         System.out.println("}");
 
-        // задаём размеры хеш-таблиц в массив arrayHash
+        // Set the size of the hash tables in the arrayHash
         int[] arrayHash = new int[]{10, 11, 16, 17, 32, 37, 64, 67};
         System.out.println("Size hash-table: { 10, 11, 16, 17, 32, 37, 64, 67 }");
 
-        /**
-         * Подсчитываем хэши методом деления
-         */
+        // Calculate hashes by dividing
         System.out.println("\n=== Division ===\n");
         for (Integer element : array) {
-            int[] tempArray = new int[68]; // исп. для подсчёта коллизий (68 - длина исходного массива)
+            int[] tempArray = new int[68]; // used to calculate collisions (68 is the length of the original array)
             for (int hash : arrayHash) {
                 System.out.print("number = " + element + " & hash = " + hash + " -> " +
                         Division(element, hash) + " | ");
@@ -48,12 +44,10 @@ public class OperationsAndMain {
             showCollisions(tempArray);
         }
 
-        /**
-         * Подсчитываем хэши методом умножения
-         */
+        // Calculate hashes by multiplying
         System.out.println("\n=== Multiplication ===\n");
         for (Integer element : array) {
-            int[] tempArray = new int[68]; // исп. для подсчёта коллизий (68 - длина исходного массива)
+            int[] tempArray = new int[68]; // used to calculate collisions (68 is the length of the original array)
             for (int hash : arrayHash) {
                 System.out.print("number = " + element + " & hash = " + hash + " -> " +
                         Multiplication(element, hash) + " | ");
@@ -66,30 +60,30 @@ public class OperationsAndMain {
 
     private static void showCollisions(int[] tempArray) {
         for (int i = 0; i < tempArray.length; i++) {
-            if (tempArray[i] > 1) { // одна коллизия для чисел из массива arrayInt будет в любом случае
+            if (tempArray[i] > 1) { // The presence of one collision is guaranteed
                 System.out.println("\thash = " + i + " -> collisions = " + tempArray[i]);
             }
         }
     }
 
-    private static int Division(int k, int n) {  // способ деления
+    private static int Division(int k, int n) {
         return k % n;  // h(key) = key mod value;
     }
 
-    private static int Multiplication(double k, double n) { // способ умножения
+    private static int Multiplication(double k, double n) {
         return (int) (n * ((k * 0.6180339887) % 1));
     }
 
-    // Метод умножения для строк
-//    private static int Multiplication(String s) {
-//        return (int) (13 * ((s.length() * 0.6180339887) % 1));
-//        // or -> return s.length() * 13;
-//    }
+    /* Multiplication method for strings */
+    private static int Multiplication(String s) {
+        return (int) (13 * ((s.length() * 0.6180339887) % 1));
+        // or easier -> return s.length() * 13;
+    }
 
-    // добавление в список (хеш-таблицу) значения по ключу
+    /* Adding to the list (hash table) values by key */
     private static void addToList(int key, int value) {
         if (!isFull()) {
-            if (list[key] == null) {  // решение путём цепочки
+            if (list[key] == null) {  // chain collision resolution
                 List<Integer> tempList = new List<>(Integer.class, 1);
                 tempList.add(value);
                 list[key] = tempList;
@@ -98,7 +92,7 @@ public class OperationsAndMain {
                 tempList.add(value);
                 list[key] = tempList;
             }
-        } else {  // линейным путём, если позволяет размер
+        } else {  // linear collision resolution, if size allows
             resize();
             addToList(key, value);
         }
@@ -118,11 +112,11 @@ public class OperationsAndMain {
     private static void print() {
         for (int i = 0; i < list.length; i++) {
             if (list[i] == null) return;
-            StringBuilder sb = new StringBuilder();
-            for (Object o : list[i].getArray()) {
-                sb.append(o).append(" ");
+            StringBuilder builder = new StringBuilder();
+            for (Object obj : list[i].getArray()) {
+                builder.append(obj).append(" ");
             }
-            System.out.print(" hash = " + i + " : " + sb.toString() + "|");
+            System.out.print(" hash = " + i + " : " + builder.toString() + "|");
         }
     }
 }
